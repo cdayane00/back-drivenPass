@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,73 +8,78 @@ datasource db {
 }
 
 model User {
-  id          Int @id @default(autoincrement())
+  id          Int          @id @default(autoincrement())
   name        String
-  email       String @unique
+  email       String       @unique
   password    String
-  createdAt   DateTime @default(now())
+  createdAt   DateTime     @default(now())
+  cards       Card[]
   credentials Credential[]
   notes       Note[]
-  cards       Card[]
   wifis       Wifi[]
+
   @@map("users")
 }
 
 model Credential {
-  id          Int @id @default(autoincrement())
-  url         String
-  username    String
-  password    String
-  title       String
-  createdAt   DateTime @default(now())
-  userId      Int
-  user        User @relation(fields: [userId], references: [id])
+  id        Int      @id @default(autoincrement())
+  url       String
+  username  String
+  password  String
+  title     String
+  createdAt DateTime @default(now())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+
   @@unique([userId, title])
   @@map("credentials")
 }
 
 model Note {
-  id          Int @id @default(autoincrement())
-  title       String
-  content     String
-  createdAt   DateTime @default(now())
-  userId      Int
-  user        User @relation(fields: [userId], references: [id])
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+
   @@unique([userId, title])
   @@map("notes")
+}
+
+model Card {
+  id             Int      @id @default(autoincrement())
+  title          String
+  number         String
+  cardholderName String
+  securityCode   String
+  expirationDate String
+  password       String
+  isVirtual      Boolean
+  type           CardType
+  createdAt      DateTime @default(now())
+  userId         Int
+  user           User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, title])
+  @@map("cards")
+}
+
+model Wifi {
+  id        Int      @id @default(autoincrement())
+  title     String
+  name      String
+  password  String
+  createdAt DateTime @default(now())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, title])
+  @@map("wifis")
 }
 
 enum CardType {
   credit
   debit
   both
-}
-
-model Card {
-  id              Int @id @default(autoincrement())
-  title           String
-  number          String
-  cardholderName  String
-  securityCode    String
-  expirationDate  String
-  password        String
-  isVirtual       Boolean
-  type            CardType
-  createdAt       DateTime @default(now())
-  userId          Int
-  user            User @relation(fields: [userId], references: [id])
-  @@unique([userId, title])
-  @@map("cards")
-}
-
-model Wifi {
-  id          Int @id @default(autoincrement())
-  title       String
-  name        String
-  password    String
-  createdAt   DateTime @default(now())
-  userId      Int
-  user        User @relation(fields: [userId], references: [id])
-  @@unique([userId, title])
-  @@map("wifis")
 }
